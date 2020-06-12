@@ -3,10 +3,14 @@
 let setUpGame = function(jQuery, data, options, element) {
   console.log("ready to play BATTLESHIP!!");
 
-  $(".cell").hover(function() {
-    $(".cell").addClass("cell-selected");
+  $(".game-cell").hover(function() {
+    $(this).addClass("cell-selected");
   }, function() {
-    $(".cell").removeClass("cell-selected");
+    $(this).removeClass("cell-selected");
+  });
+
+  $(".game-cell").click(function() {
+    console.log("click");
   });
 };
 

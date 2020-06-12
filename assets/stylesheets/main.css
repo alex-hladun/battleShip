@@ -8,32 +8,48 @@
 #player-board {
   display: flex; 
   flex-direction: column; 
-  width: 450px; 
-  height: 450px
+  width: 350px; 
+  height: 350px
 }
 
-.game-row-label {
+.game-board{
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+.board-row-label {
+  display: flex; 
+  height: 33%;
+  /* margin-left: 10%; */
+  flex-direction: row; 
+
+  justify-content: space-around; 
+  background-color: black;
+  border-width: 1px; 
+  border-color: chartreuse; 
+  border-style: solid;
+}
+
+.top-row-label {
   display: flex; 
   height: 10%;
   margin-left: 10%;
   flex-direction: row; 
   justify-content: space-around; 
   background-color: black;
-  border-width: 1px; 
+  /* border-width: 1px; 
   border-color: chartreuse; 
-  border-style: solid;
+  border-style: solid; */
 }
-.board-row-label {
-  display: flex; 
-  height: 33%;
-  margin-left: 10%;
-  flex-direction: row; 
-  justify-content: space-around; 
-  background-color: black;
-  border-width: 1px; 
-  border-color: chartreuse; 
-  border-style: solid;
+
+.left-column-label{
+  display: flex;
+  width: 10%;
+  flex-direction: column;
+  justify-content: space-around;
+  /* align-items: center; */
 }
+
 .grid {
   display: grid;
   grid-template-columns: repeat(11, 20px);
@@ -41,17 +57,25 @@
   gap: 1px;
   background-color: chartreuse;
 }
+
+.middle-content{
+  display: flex;
+  flex: 1;
+}
+
+
 .game-cell {
    /* center the cell content */
   justify-content: center;
+  flex: 1; 
   /* will change this based on cell count */
   height: 100%;
-  width: 30%;
+  /* width: 30%; */
   border-width: 1px;
   border-color: chartreuse;
   border-style: solid;
-  align-items: center;
-  display: flex;
+
+  /* display: flex; */
   font-family: Arial;
   font-size: 1rem;
   color: black;
@@ -89,6 +113,8 @@
 
 .cell-selected {
   background: chartreuse;
+  /* border: 1px black solid; */
+
 }
 
 .page-body {
