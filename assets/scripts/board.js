@@ -27,18 +27,18 @@ class Board {
     this.resetBoard();
     this.moveHistory = [];
   }
-
   randomizeBoard() {
 
   }
-
+  
   resetBoard() {
     let row = new Array();
     for (let i = 0; i < this.boardSize; i++) {
       row.push("O");
     }
     for (let i = 0; i < this.boardSize; i++) {
-      this.board.push(_.cloneDeep(row));
+      const rowD = [...row];
+      this.board.push(rowD);
     }
   }
 
@@ -85,7 +85,11 @@ class Board {
 const player = new Board(10);
 const computer = new Board(10);
 
-player.attack(computer, "A6");
+
 player.attack(computer, "D6");
 player.attack(computer, "A1");
 console.log(computer.board);
+
+module.exports = {
+  Board
+};
