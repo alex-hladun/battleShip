@@ -5,345 +5,138 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="stylesheet" type="text/css" href="assets/stylesheets/main.css">
+  <link rel="stylesheet" type="text/css" href="assets/stylesheets/settings.css">
   //
   <!-- Bootstrap CSS -->
   <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
     integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous"></link> -->
 
+
   <title>BattleShip</title>
-  <link rel="stylesheet"
-  href="https://github.com/adobe-fonts/source-code-pro/blob/release/source-code-variable.css">
+  <link rel="stylesheet" href="https://github.com/adobe-fonts/source-code-pro/blob/release/source-code-variable.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css"
+    type="text/css" />
+  <!-- FONT -->
+  <link href="https://fonts.googleapis.com/css2?family=Squada+One&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Domine:wght@700&display=swap" rel="stylesheet">
 </head>
 
 
 <body class="page-body" id="page-body">
-  
+
+ 
+
   <!-- <div id="game-container" style="display: flex; flex-direction: column;">
-    <div id="turn-indicator2" class="info-box">Player Turn</div>
+    <article class="info-box info-banner">BATTLESHIP</article>
+    <article id="settings-box" class="info-box"><span class="settings-banner">SETTINGS</span>
 
-    <div id="all-info-container">
-      <div class="ship-dashboard">
-        Test
+      <div id="setting-row1" class="setting-row">
+        <article class="table-container">
+          <table class="settings-table" style="width:50%">
+            <tr class="settings-table-row">
+              <th>Ship</th>
+              <th></th>
+              <th>Length</th>
+              <th></th>
+            </tr>
+            <tr>
+              <td>Battleship</td>
+              <td class="ticker-box">-</td>
+              <td>4</td>
+              <td class="ticker-box">+</td>
+            </tr>
+            <tr>
+              <td>Cruiser</td>
+              <td class="ticker-box">-</td>
+              <td>5</td>
+              <td class="ticker-box">+</td>
+            </tr>
+            <tr>
+              <td>Submarine</td>
+              <td class="ticker-box">-</td>
+              <td>5</td>
+              <td class="ticker-box">+</td>
+            </tr>
+            <tr>
+              <td>Ship 4</td>
+              <td class="ticker-box">-</td>
+              <td>5</td>
+              <td class="ticker-box">+</td>
+            </tr>
+            <tr>
+              <td>Ship 5</td>
+              <td class="ticker-box">-</td>
+              <td>5</td>
+              <td class="ticker-box">+</td>
+            </tr>
+          </table>
+          <div class="ticker-box-outer">
+            <div class="ticker-box">
+              -
+            </div>
+            <div class="ticker-box">
+              +
+            </div>
+          </div>
+        </article>
+
+        <article id="settings-list">
+          <article class="settings-box-right">
+            <div class="">Shots Per Turn: </div>
+            <span class="settings-number">1</span>
+          </article>
+          <div class="ticker-box-outer">
+            <div class="ticker-box">
+              -
+            </div>
+            <div class="ticker-box">
+              +
+            </div>
+          </div>
+          <article class="settings-box-right">
+            <div class="">Board Size: </div>
+            <span class="settings-number">10</span>
+          </article>
+
+          <div class="ticker-box-outer">
+            <div class="ticker-box">
+              -
+            </div>
+            <div class="ticker-box">
+              +
+            </div>
+          </div>
+
+
+          <article class="settings-box-right">
+            <div class="">Difficulty: </div>
+            <span class="settings-number">Easy</span>
+          </article>
+
+          <div class="ticker-box-outer">
+            <div class="ticker-box">
+              -
+            </div>
+            <div class="ticker-box">
+              +
+            </div>
+          </div>
+
+
+
+        </article>
+
       </div>
-
-      <div id="player-board">
-        <div class="top-row-label" id="player-board-row-label">
-          <div class="cell-row-label" id="cA">A</div>
-          <div class="cell-row-label" id="cB">B</div>
-          <div class="cell-row-label" id="cC">C</div>
-          <div class="cell-row-label" id="cC">D</div>
-          <div class="cell-row-label" id="cC">E</div>
-          <div class="cell-row-label" id="cC">F</div>
-          <div class="cell-row-label" id="cC">G</div>
-          <div class="cell-row-label" id="cC">H</div>
-          <div class="cell-row-label" id="cC">I</div>
-          <div class="cell-row-label" id="cC">J</div>
-        </div>
-        <div class="middle-content">
-          <div class="left-column-label">
-            <div class="cell-row-label" id="cA">1</div>
-            <div class="cell-row-label" id="cB">2</div>
-            <div class="cell-row-label" id="cC">3</div>
-            <div class="cell-row-label" id="cC">4</div>
-            <div class="cell-row-label" id="cC">5</div>
-            <div class="cell-row-label" id="cC">6</div>
-            <div class="cell-row-label" id="cC">7</div>
-            <div class="cell-row-label" id="cC">8</div>
-            <div class="cell-row-label" id="cC">9</div>
-            <div class="cell-row-label" id="cC">10</div>
-          </div>
-          <div class="game-board">
-            <div class="board-row-label" id="row1">
-              <div class="game-cell" id="A1">A1</div>
-              <div class="game-cell" id="A1"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-            </div>
-            <div class="board-row-label" id="row1">
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-            </div>
-            <div class="board-row-label" id="row1">
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-            </div>
-            <div class="board-row-label" id="row1">
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-            </div>
-            <div class="board-row-label" id="row1">
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-            </div>
-            <div class="board-row-label" id="row1">
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-            </div>
-            <div class="board-row-label" id="row1">
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-            </div>
-            <div class="board-row-label" id="row1">
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-            </div>
-            <div class="board-row-label" id="row1">
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-            </div>
-            <div class="board-row-label" id="row1">
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-              <div class="game-cell"></div>
-            </div>
-          </div>
-        </div>
+      <div id="setting-row2" class="setting-row">
+        <span class="info-banner info-box settings-button">Play Online With Friend</span>
+        <span class="info-banner info-box settings-button">Play Computer</span>
       </div>
-
-
-
-
-    
-
-    <br>
-
-    Computer Board:
-
-    <div id="player-board">
-      <div class="top-row-label" id="player-board-row-label">
-        <div class="cell-row-label" id="cA">A</div>
-        <div class="cell-row-label" id="cB">B</div>
-        <div class="cell-row-label" id="cC">C</div>
-        <div class="cell-row-label" id="cC">D</div>
-        <div class="cell-row-label" id="cC">E</div>
-        <div class="cell-row-label" id="cC">F</div>
-        <div class="cell-row-label" id="cC">G</div>
-        <div class="cell-row-label" id="cC">H</div>
-        <div class="cell-row-label" id="cC">I</div>
-        <div class="cell-row-label" id="cC">J</div>
-      </div>
-      <div class="middle-content">
-        <div class="left-column-label">
-          <div class="cell-row-label" id="cA">1</div>
-          <div class="cell-row-label" id="cB">2</div>
-          <div class="cell-row-label" id="cC">3</div>
-          <div class="cell-row-label" id="cC">4</div>
-          <div class="cell-row-label" id="cC">5</div>
-          <div class="cell-row-label" id="cC">6</div>
-          <div class="cell-row-label" id="cC">7</div>
-          <div class="cell-row-label" id="cC">8</div>
-          <div class="cell-row-label" id="cC">9</div>
-          <div class="cell-row-label" id="cC">10</div>
-        </div>
-        <div class="game-board">
-          <div class="board-row-label" id="row1">
-            <div class="game-cell" id="A1">A1</div>
-            <div class="game-cell" id="A1"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-          </div>
-          <div class="board-row-label" id="row1">
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-          </div>
-          <div class="board-row-label" id="row1">
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-          </div>
-          <div class="board-row-label" id="row1">
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-          </div>
-          <div class="board-row-label" id="row1">
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-          </div>
-          <div class="board-row-label" id="row1">
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-          </div>
-          <div class="board-row-label" id="row1">
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-          </div>
-          <div class="board-row-label" id="row1">
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-          </div>
-          <div class="board-row-label" id="row1">
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-          </div>
-          <div class="board-row-label" id="row1">
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-            <div class="game-cell"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
 
   </div> -->
 
-  </div>
-</div>
 
-  
+
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="assets/scripts/battleship.js"></script>

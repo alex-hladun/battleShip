@@ -6,33 +6,45 @@ class Board {
     this.board = [];
     this.resetBoard();
     this.moveHistory = [];
+    this.playerTurn;
     this.shipList = {
-      1: {
+      'Carrier': {
         length: 5,
         horizontal: true,
         hitCount: 0
       },
-      2: {
+      'Battleship': {
         length: 4,
         horizontal: true,
         hitCount: 0
       },
-      3: {
+      'Cruiser': {
         length: 3,
         horizontal: true,
         hitCount: 0
       },
-      4: {
+      'Submarine': {
         length: 3,
         horizontal: true,
         hitCount: 0
       },
-      5: {
+      'Destroyer': {
         length: 2,
         horizontal: true,
         hitCount: 0
       }
     };
+    this.shotsPerTurn = 1;
+    this.difficulty = 0;
+    this.diffArray = ['easy', 'hard', 'impossible'];
+    this.totalTargets = function() {
+      this.totalShipTargets = 0;
+      for (const ship in this.shipList) {
+        this.totalShipTargets += this.shipList[ship].length;
+      }
+      console.log(this.totalShipTargets);
+    };
+    this.totalHits = 0;
   }
 
   getRandomCell() {
@@ -114,8 +126,11 @@ class Board {
   }
 
   computerAttack(target) {
-    while (!this.attack(target, this.getRandomCell())) {
-      this.attack(target, this.getRandomCell());
+    let validShot = this.attack(target, this.getRandomCell());
+    console.log('shot taken');
+
+    while (!validShot) {
+      validShot = this.attack(target, this.getRandomCell());
     }
   }
 
@@ -132,7 +147,7 @@ class Board {
     case 'O':
       console.log("Miss!");
       enemy.board[rowID][colID] = "M";
-      
+
       logMessage = $(`<span>${this.name.toLocaleUpperCase()} fired at ${target.toLocaleUpperCase()}. <b>Miss!</b></span>`);
       logMessage.appendTo($(`#game-log`));
       $('#game-log').scrollTop(0);
@@ -142,39 +157,46 @@ class Board {
 
       return true;
     case 'X':
+      console.log("Shot at target already hit");
       return false;
     case "M":
+      console.log("Shot at target already missed");
       return false;
     default:
       $(`#${enemy.name}${enemyShot}${enemy.shipList[enemyShot].hitCount}`).addClass('cell-ship-strike');
-
-
       enemy.shipList[enemyShot].hitCount++;
-      console.log(`hit ship ${enemy.shipList[enemyShot].hitCount} times`);
+      this.totalHits ++;
       enemy.board[rowID][colID] = "X";
-      console.log(`target painted red ${enemy.name}${target}`);
 
       logMessage = $(`<span>${this.name.toLocaleUpperCase()} fired at ${target.toLocaleUpperCase()}. <b>Hit!</b></span>`);
       logMessage.appendTo($(`#game-log`));
-      $('#game-log').scrollTop(0);
 
+      // Sunk ship Message
+      if (enemy.shipList[enemyShot].hitCount === enemy.shipList[enemyShot].length) {
+        logMessage = $(`<span>${this.name.toLocaleUpperCase()} <b>SUNK</b> ${enemy.name.toLocaleUpperCase()}'s  <b>${enemyShot.toLocaleUpperCase()}!!</b></span>`);
+        logMessage.appendTo($(`#game-log`));
+      }
+      $('#game-log').scrollTop(0);
 
       $(`#${enemy.name}${target}`).removeClass(`computer-cell game-cell`).addClass(`cell-ship-strike hover-red`);
       $(`#${enemy.name}${target}`).unbind('mouseout');
+
+      console.log(this.totalHits);
+      console.log(this.totalShipTargets);
+      if (this.totalHits === this.totalShipTargets) {
+        $('#game-over-banner').text(`${this.name.toLocaleUpperCase()} Wins!`);
+        $('#game-over-banner').addClass("show");
+        $(".computer-cell").unbind();
+        this.playerTurn = "game-over";
+      }
       return true;
     }
   }
 }
 
-// const player = new Board(10);
-// // const computer = new Board(10);
-// // // console.log(player);
-// player.randomizeBoard();
-// console.log(player.board);
-// console.log(player.getRandomCell());
 
-
-let setUpGame = function(jQuery, data, options, element) {
+let setUpGame = function (jQuery, data, options, element) {
+  // Function runs on webpage load.
 
   const setUpGameContainer = () => {
     const pageBody = $("#page-body");
@@ -200,7 +222,6 @@ let setUpGame = function(jQuery, data, options, element) {
     const gameContainer = renderElement;
     const alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
 
-
     const shipDashboard = $(`<div id="${identifier}-ship-dashboard"class="ship-dashboard"></div>`);
     shipDashboard.appendTo(gameContainer);
 
@@ -208,7 +229,6 @@ let setUpGame = function(jQuery, data, options, element) {
       const shipRow = $(`<div class="ship-row"></div>`);
       shipRow.appendTo(shipDashboard);
       for (let i = 0; i < player.shipList[ship].length; i++) {
-        console.log(player.shipList);
         const shipBlockIdentifier = $(`<div class="ship-blocks" id="${identifier}${ship + i}"></div>`);
         shipBlockIdentifier.appendTo(shipRow);
       }
@@ -245,7 +265,6 @@ let setUpGame = function(jQuery, data, options, element) {
         gameBoardCell.appendTo(gameBoardRows);
       }
     }
-    console.log("drawing game board");
   };
 
   const renderShips = (playerObj, identifier) => {
@@ -262,56 +281,244 @@ let setUpGame = function(jQuery, data, options, element) {
     }
   };
 
-  const player = new Board('player', 10);
-  const computer = new Board('computer', 10);
-  computer.randomizeBoard();
-  player.randomizeBoard();
 
+  const removeSettings = () => {
 
-  let playerTurn = (Math.floor(Math.random() * 2) === 0);
-
-  const toggleTurn = () => {
-    if (playerTurn) {
-      playerTurn = false;
-      $(`#turn-indicator`).html(`Computer Turn`);
-      setTimeout(function() {
-        computer.computerAttack(player);
-        toggleTurn();
-      }, 300);
-    } else {
-      $(`#turn-indicator`).html(`Player Turn`);
-      playerTurn = true;
-    }
   };
 
-  const gameContainer = setUpGameContainer();
-  drawGameBoard(gameContainer, 'player');
-  drawGameBoard(gameContainer, 'computer');
+  const renderTurnAndLog = () => {
+    // render the 'player turn' box and the game log'
 
-  renderShips(player, 'player');
+  };
 
-  if (playerTurn) {
-    let logMessage = $(`<span>Computer goes first.</span>`);
-    logMessage.appendTo($(`#game-log`));
-  } else {
-    let logMessage = $(`<span>Player goes first.</span>`);
-    logMessage.appendTo($(`#game-log`));
-  }
+  const player = new Board('player', 10);
+  const computer = new Board('computer', 10);
+  
 
-  toggleTurn();
+  const renderSettings = () => {
+    const settingsRender = $(`<div id="game-container" style="display: flex; flex-direction: column;">
+  <article class="info-box info-banner">BATTLESHIP</article>
+  <article id="settings-box" class="info-box"><span class="settings-banner">SETTINGS</span>
+
+    <div id="setting-row1" class="setting-row">
+      <article class="table-container">
+        <table id="settings-table" class="settings-table" style="width:50%">
+          <tr class="settings-table-row">
+            <th>Ship</th>
+            <th></th>
+            <th>Length</th>
+            <th></th>
+          </tr>
+          
+        </table>
+        <div class="ticker-box-outer">
+          <div id="setting-del-shp" class="ticker-box">
+            -
+          </div>
+          <div id="setting-add-shp" class="ticker-box">
+            +
+          </div>
+        </div>
+      </article>
+
+      <article id="settings-list">
+        <article class="settings-box-right">
+          <div class="">Shots Per Turn: </div>
+          <span id="setting-spt" class="settings-number">${player.shotsPerTurn}</span>
+        </article>
+        <div class="ticker-box-outer">
+          <div id="setting-del-spt" class="ticker-box">
+            -
+          </div>
+          <div id="setting-add-spt"  class="ticker-box">
+            +
+          </div>
+        </div>
+        <article class="settings-box-right">
+          <div class="">Board Size: </div>
+          <span id="setting-bsi" class="settings-number">${player.boardSize}</span>
+        </article>
+
+        <div class="ticker-box-outer">
+          <div id="setting-del-bsi" class="ticker-box">
+            -
+          </div>
+          <div id="setting-add-bsi" class="ticker-box">
+            +
+          </div>
+        </div>
 
 
-  $(".computer-cell").hover(function () {
-    $(this).addClass("cell-selected");
-  }, function () {
-    $(this).removeClass("cell-selected");
+        <article class="settings-box-right">
+          <div class="">Difficulty: </div>
+          <span id="setting-dif" class="settings-number">${player.diffArray[player.difficulty]}</span>
+        </article>
+
+        <div class="ticker-box-outer">
+          <div id="setting-del-dif" class="ticker-box">
+            -
+          </div>
+          <div id="setting-add-dif" class="ticker-box">
+            +
+          </div>
+        </div>
+
+
+
+      </article>
+
+    </div>
+    <div id="setting-row2" class="setting-row">
+      <span class="info-banner info-box settings-button">Play Online With Friend</span>
+      <span id="btn-play-cpu" class="info-banner info-box settings-button">Play Computer</span>
+    </div>
+
+</div>`);
+
+    const pageBody = $("#page-body");
+    settingsRender.appendTo(pageBody);
+
+    for (const ship in player.shipList) {
+      const shipToRender = $(`
+    <tr>
+    <td>${ship}</td>
+    <td id="setting-del-shl-${ship}" class="ticker-box">-</td>
+    <td>${player.shipList[ship]['length']}</td>
+    <td id="setting-add-shl-${ship}"  class="ticker-box">+</td>
+  </tr>`);
+      shipToRender.appendTo($('#settings-table'));
+    }
+
+  };
+
+  // RANDOMIZE PLAYER BOARD - del LATER
+  // player.randomizeBoard();
+
+  renderSettings();
+
+  $('#btn-play-cpu').click(function() {
+    $('#game-container').remove();
+    // DRAWS the HTML elements for the gamebaord.
+    const gameContainer = setUpGameContainer();
+    drawGameBoard(gameContainer, 'player');
+    drawGameBoard(gameContainer, 'computer');
+    computer.randomizeBoard();
+    player.randomizeBoard();
+    renderShips(player, 'player');
+
+    $(".computer-cell").hover(function () {
+      $(this).addClass("cell-selected");
+    }, function () {
+      $(this).removeClass("cell-selected");
+    });
+  
+    $(".computer-cell").click(function () {
+      if (player.playerTurn) {
+        if (player.attack(computer, $(this).attr("id").slice(8, 11))) {
+          toggleTurn();
+        }
+      }
+    });
+
+      
+    const toggleTurn = () => {
+      if (player.playerTurn === "game-over" || computer.playerTurn === "game-over") {
+        $(`#turn-indicator`).html(`Game Over`);
+        console.log("game over");
+      } else if (player.playerTurn) {
+        player.playerTurn = false;
+        $(`#turn-indicator`).html(`Computer Turn`);
+        setTimeout(function () {
+          computer.computerAttack(player);
+          toggleTurn();
+        }, 300);
+      } else {
+        $(`#turn-indicator`).html(`Player Turn`);
+        player.playerTurn = true;
+      }
+    };
+
+    player.playerTurn = (Math.floor(Math.random() * 2) === 0);
+    if (player.playerTurn) {
+      let logMessage = $(`<span>Randomizing start: Computer goes first.</span>`);
+      logMessage.appendTo($(`#game-log`));
+    } else {
+      let logMessage = $(`<span>Randomizing start: Player goes first.</span>`);
+      logMessage.appendTo($(`#game-log`));
+    }
+    player.totalTargets();
+    computer.totalTargets();
+
+    toggleTurn();
+
+    const gameOverMessage = $(` <div id="game-over-banner">Game Over!</div>`);
+    gameOverMessage.appendTo('#page-body');
   });
 
-  $(".computer-cell").click(function () {
-    if (playerTurn) {
-      if (player.attack(computer, $(this).attr("id").slice(8, 11))) {
-        toggleTurn();
+  $(".ticker-box").click(function() {
+    const id = $(this).attr('id');
+    console.log('clicked', this);
+    console.log('clicked', id);
+    const method = id.slice(8,11);
+    const methodID = id.slice(12,15);
+    const ship = id.slice(16, 28);
+    
+    switch (method) {
+    case 'add':
+      switch (methodID) {
+      case 'shl':
+        if (player.shipList[ship].length < player.boardSize) {
+          player.shipList[ship].length ++;
+          computer.shipList[ship].length ++;
+          $(this).prev().text(player.shipList[ship].length);
+        }
+        break;
+      case 'spt':
+        player.shotsPerTurn ++;
+        $("#setting-spt").text(player.shotsPerTurn);
+        break;
+      case 'bsi':
+        player.boardSize ++;
+        $("#setting-bsi").text(player.boardSize);
+        break;
+      case 'dif':
+        if (player.difficulty < player.diffArray.length) {
+          player.difficulty ++;
+          $('#setting-dif').text(player.diffArray[player.difficulty]);
+        }
+        break;
       }
+      break;
+    case 'del':
+      switch (methodID) {
+      case 'shl':
+        if (player.shipList[ship].length > 1) {
+          player.shipList[ship].length --;
+          computer.shipList[ship].length --;
+          $(this).next().text(player.shipList[ship].length);
+        }
+        break;
+      case 'spt':
+        if (player.shotsPerTurn > 1) {
+          player.shotsPerTurn --;
+          $("#setting-spt").text(player.shotsPerTurn);
+        }
+        break;
+      case 'bsi':
+        if (player.boardSize > 2) {
+          player.boardSize --;
+          $("#setting-bsi").text(player.boardSize);
+        }
+        break;
+      case 'dif':
+        if (player.difficulty > 0) {
+          player.difficulty --;
+          $('#setting-dif').text(player.diffArray[player.difficulty]);
+        }
+        break;
+      }
+      break;
     }
+
   });
 };
