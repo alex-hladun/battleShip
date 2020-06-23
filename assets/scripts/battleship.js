@@ -1,3 +1,4 @@
+/* eslint-disable no-fallthrough */
 /* eslint-disable no-undef */
 class Board {
   constructor(name, boardSize) {
@@ -36,15 +37,15 @@ class Board {
     };
     this.shotsPerTurn = 1;
     this.difficulty = 0;
-    this.diffArray = ['easy', 'hard', 'impossible'];
+    this.diffArray = ['easy', 'medium', 'hard', 'impossible'];
     this.totalTargets = function() {
       this.totalShipTargets = 0;
       for (const ship in this.shipList) {
         this.totalShipTargets += this.shipList[ship].length;
       }
-      console.log(this.totalShipTargets);
     };
     this.totalHits = 0;
+    this.potentialMoves = [];
   }
 
   getRandomCell() {
@@ -62,11 +63,14 @@ class Board {
     const rowID = cell.slice(1, 2) - 1;
     const shipLen = ship.length;
 
+    console.log('ship detail', ship);
+
     if (ship.horizontal) {
       for (let i = 0; i < shipLen; i++) {
         if (this.board[rowID][colID + i] !== "O" || this.board[rowID][colID + i] === undefined) {
           return false;
         }
+        console.log('approved true value', this.board[rowID][colID + i]);
       }
       return true;
     } else {
@@ -75,9 +79,10 @@ class Board {
         if (!this.board[rowID + i]) {
           return false;
         }
-        if (this.board[rowID + i][colID] !== "O") {
+        if (this.board[rowID + i][colID] !== "O" || this.board[rowID + i][colID] === undefined) {
           return false;
         }
+        console.log('aprroved true vert value', this.board[rowID + i][colID]);
       }
       return true;
     }
@@ -89,8 +94,10 @@ class Board {
       this.shipList[ship].horizontal = randHz;
       const shipLen = this.shipList[ship].length;
       let cell = this.getRandomCell();
-      while (!this.checkEligible(cell, this.shipList[ship])) {
+      let validPlacement = this.checkEligible(cell, this.shipList[ship]);
+      while (!validPlacement) {
         cell = this.getRandomCell();
+        validPlacement = this.checkEligible(cell, this.shipList[ship]);
       }
 
       const colID = this.convertColToNum(cell.slice(0, 1));
@@ -109,6 +116,7 @@ class Board {
 
   }
   resetBoard() {
+    this.board = [];
     // Generates the board with specified rows and columns
     let row = new Array();
     for (let i = 0; i < this.boardSize; i++) {
@@ -120,14 +128,48 @@ class Board {
     }
   }
 
+  generateComputerMoves(enemy) {
+    const alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
+    // console.log(enemy.board);
+    for (const row in enemy.board) {
+      // console.log(enemy.board[row]);
+      for (const col in enemy.board[row]) {
+        // console.log('targett',enemy.board[row][col]);
+        if (enemy.board[row][col] !== 'O') {
+          const colID = alphabet[col];
+          const rowID = Number(row) + 1;
+          this.potentialMoves.push(colID + rowID);
+          switch (enemy.difficulty) {
+          case 0:
+            this.potentialMoves.push(this.getRandomCell());
+          case 1:
+            this.potentialMoves.push(this.getRandomCell());
+            this.potentialMoves.push(this.getRandomCell());
+          case 2:
+            this.potentialMoves.push(this.getRandomCell());
+            this.potentialMoves.push(this.getRandomCell());
+            console.log('hit third move add');
+            break;
+          }
+        }
+      }
+    }
+
+    console.log(this);
+  }
+
   convertColToNum(col) {
     const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('');
     return alphabet.indexOf(col.toLowerCase());
   }
 
   computerAttack(target) {
-    let validShot = this.attack(target, this.getRandomCell());
-    console.log('shot taken');
+    const randIndex = Math.round(Math.random() * (this.potentialMoves.length - 1));
+    const randMove = this.potentialMoves.splice(randIndex, 1);
+    console.log('random index', randIndex);
+    console.log('moves length', this.potentialMoves.length);
+
+    let validShot = this.attack(target, randMove[0]);
 
     while (!validShot) {
       validShot = this.attack(target, this.getRandomCell());
@@ -147,14 +189,11 @@ class Board {
     case 'O':
       console.log("Miss!");
       enemy.board[rowID][colID] = "M";
-
       logMessage = $(`<span>${this.name.toLocaleUpperCase()} fired at ${target.toLocaleUpperCase()}. <b>Miss!</b></span>`);
       logMessage.appendTo($(`#game-log`));
       $('#game-log').scrollTop(0);
-
       $(`#${enemy.name}${target}`).removeClass(`computer-cell game-cell`).addClass(`cell-shot-miss hover-blue`);
       $(`#${enemy.name}${target}`).unbind('mouseenter');
-
       return true;
     case 'X':
       console.log("Shot at target already hit");
@@ -281,19 +320,8 @@ let setUpGame = function (jQuery, data, options, element) {
     }
   };
 
-
-  const removeSettings = () => {
-
-  };
-
-  const renderTurnAndLog = () => {
-    // render the 'player turn' box and the game log'
-
-  };
-
   const player = new Board('player', 10);
   const computer = new Board('computer', 10);
-  
 
   const renderSettings = () => {
     const settingsRender = $(`<div id="game-container" style="display: flex; flex-direction: column;">
@@ -391,8 +419,7 @@ let setUpGame = function (jQuery, data, options, element) {
 
   };
 
-  // RANDOMIZE PLAYER BOARD - del LATER
-  // player.randomizeBoard();
+  
 
   renderSettings();
 
@@ -402,8 +429,11 @@ let setUpGame = function (jQuery, data, options, element) {
     const gameContainer = setUpGameContainer();
     drawGameBoard(gameContainer, 'player');
     drawGameBoard(gameContainer, 'computer');
+    player.resetBoard();
+    computer.resetBoard();
     computer.randomizeBoard();
     player.randomizeBoard();
+    computer.generateComputerMoves(player);
     renderShips(player, 'player');
 
     $(".computer-cell").hover(function () {
@@ -457,8 +487,6 @@ let setUpGame = function (jQuery, data, options, element) {
 
   $(".ticker-box").click(function() {
     const id = $(this).attr('id');
-    console.log('clicked', this);
-    console.log('clicked', id);
     const method = id.slice(8,11);
     const methodID = id.slice(12,15);
     const ship = id.slice(16, 28);
@@ -479,6 +507,7 @@ let setUpGame = function (jQuery, data, options, element) {
         break;
       case 'bsi':
         player.boardSize ++;
+        computer.boardSize ++;
         $("#setting-bsi").text(player.boardSize);
         break;
       case 'dif':
@@ -507,6 +536,7 @@ let setUpGame = function (jQuery, data, options, element) {
       case 'bsi':
         if (player.boardSize > 2) {
           player.boardSize --;
+          computer.boardSize --;
           $("#setting-bsi").text(player.boardSize);
         }
         break;
