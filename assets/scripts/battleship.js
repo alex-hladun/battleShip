@@ -1,4 +1,7 @@
 /* eslint-disable no-fallthrough */
+
+// const e = require("express");
+
 /* eslint-disable no-undef */
 class Board {
   constructor(name, boardSize) {
@@ -59,8 +62,10 @@ class Board {
   }
 
   checkEligible(cell, ship) {
+
+    console.log("cell", cell);
     const colID = this.convertColToNum(cell.slice(0, 1));
-    const rowID = cell.slice(1, 2) - 1;
+    const rowID = cell.slice(1, cell.length) - 1;
     const shipLen = ship.length;
 
     console.log('ship detail', ship);
@@ -117,6 +122,11 @@ class Board {
   }
   resetBoard() {
     this.board = [];
+    for (const ship in this.shipList) {
+      this.shipList[ship].hitCount = 0;
+    }
+    this.totalHits = 0;
+    this.potentialMoves = [];
     // Generates the board with specified rows and columns
     let row = new Array();
     for (let i = 0; i < this.boardSize; i++) {
@@ -202,6 +212,7 @@ class Board {
       console.log("Shot at target already missed");
       return false;
     default:
+      // Adds red to ship indicator.
       $(`#${enemy.name}${enemyShot}${enemy.shipList[enemyShot].hitCount}`).addClass('cell-ship-strike');
       enemy.shipList[enemyShot].hitCount++;
       this.totalHits ++;
@@ -220,8 +231,6 @@ class Board {
       $(`#${enemy.name}${target}`).removeClass(`computer-cell game-cell`).addClass(`cell-ship-strike hover-red`);
       $(`#${enemy.name}${target}`).unbind('mouseout');
 
-      console.log(this.totalHits);
-      console.log(this.totalShipTargets);
       if (this.totalHits === this.totalShipTargets) {
         $('#game-over-banner').text(`${this.name.toLocaleUpperCase()} Wins!`);
         $('#game-over-banner').addClass("show");
@@ -236,21 +245,30 @@ class Board {
 
 let setUpGame = function (jQuery, data, options, element) {
   // Function runs on webpage load.
+  const alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
+
+  
 
   const setUpGameContainer = () => {
     const pageBody = $("#page-body");
     const gameContainer = $(" <div id=\"game-container\" style=\"display: flex; flex-direction: column; \">");
     gameContainer.appendTo(pageBody);
 
+    const upperInfo = $(`<div id="upper-info-bar"></div>`);
+    upperInfo.appendTo(gameContainer);
+
+    const newGame = $(`<div id="new-game-btn" class="info-banner info-box settings-button">New Game</div>`);
+    newGame.appendTo(upperInfo);
+
     const infoBox = $(`<div id="turn-indicator" class="info-box info-banner">Player Turn!</div>`);
-    infoBox.appendTo(gameContainer);
+    infoBox.appendTo(upperInfo);
 
     const allInfoContainer = $(`<div id="all-info-container">`);
     allInfoContainer.appendTo(gameContainer);
 
     const gamelog = $(`<div id="game-log" class="info-box"></div>`);
     gamelog.appendTo(gameContainer);
-    const update = $(`<span><b>Welcome to BATTLESHIP!</b></span>`);
+    const update = $(`<span><b>Welcome to BATTLESHIP!</b> Place your ships. Press 'R' to rotate.</span>`);
     update.appendTo($(`#game-log`));
 
     return allInfoContainer;
@@ -401,7 +419,7 @@ let setUpGame = function (jQuery, data, options, element) {
       <span id="btn-play-cpu" class="info-banner info-box settings-button">Play Computer</span>
     </div>
 
-</div>`);
+    </div>`);
 
     const pageBody = $("#page-body");
     settingsRender.appendTo(pageBody);
@@ -419,20 +437,8 @@ let setUpGame = function (jQuery, data, options, element) {
 
   };
 
-  
 
-  renderSettings();
-
-  $('#btn-play-cpu').click(function() {
-    $('#game-container').remove();
-    // DRAWS the HTML elements for the gamebaord.
-    const gameContainer = setUpGameContainer();
-    drawGameBoard(gameContainer, 'player');
-    drawGameBoard(gameContainer, 'computer');
-    player.resetBoard();
-    computer.resetBoard();
-    computer.randomizeBoard();
-    player.randomizeBoard();
+  const donePlacingStartGame = () => {
     computer.generateComputerMoves(player);
     renderShips(player, 'player');
 
@@ -483,72 +489,209 @@ let setUpGame = function (jQuery, data, options, element) {
 
     const gameOverMessage = $(` <div id="game-over-banner">Game Over!</div>`);
     gameOverMessage.appendTo('#page-body');
-  });
 
-  $(".ticker-box").click(function() {
-    const id = $(this).attr('id');
-    const method = id.slice(8,11);
-    const methodID = id.slice(12,15);
-    const ship = id.slice(16, 28);
+  };
+
+  
+
+  const applySettingStyling = () => {
+    // Starts set-up ship mode.
+    $('#btn-play-cpu').click(function() {
+      $('#game-container').remove();
+      // DRAWS the HTML elements for the gamebaord.
+      const gameContainer = setUpGameContainer();
+      drawGameBoard(gameContainer, 'player');
+      drawGameBoard(gameContainer, 'computer');
+      player.resetBoard();
+      computer.resetBoard();
+      computer.randomizeBoard();
+      // player.randomizeBoard();
+      //Set up ships here
+  
+      $('#new-game-btn').click(function() {
+        $('#game-container').remove();
+        $('#game-over-banner').removeClass("show");
+        shipIndex = 0;
+        renderSettings();
+        applySettingStyling();
+      });
+  
+      const colorShipSelector = (ship) => {
+        $(`#turn-indicator`).html(`Place your ${ship}`);
+        $('.ship-blocks').removeClass("cell-selected");
+        $(`[id^=player${ship}]`).addClass("cell-selected");
+  
+      };
+  
+      let shipIndex = 0;
+      let shipArr = [];
+      for (const ship in player.shipList) {
+        shipArr.push(ship);
+      }
+      const shipCount = Object.keys(player.shipList).length;
+      console.log('ship count:', shipCount);
+      colorShipSelector(shipArr[shipIndex]);
+  
+      // Change color of all eligible spaces
+      $(".player-cell").hover(function() {
+        const cell = $(this).attr("id").slice(6, 10);
+        const colID = player.convertColToNum(cell.slice(0, 1));
+        const rowID = cell.slice(1, cell.length) - 1;
+        const shipLen = player.shipList[shipArr[shipIndex]].length;
+        
+        if (player.checkEligible($(this).attr("id").slice(6, 10), player.shipList[shipArr[shipIndex]])) {
+          console.log('eligible cell');
+          $(this).addClass("cell-selected");
+          if (player.shipList[shipArr[shipIndex]].horizontal) {
+            for (let i = 0; i < shipLen; i++) {
+              $(`#player${alphabet[colID + i]}${rowID + 1}`).addClass('cell-selected');
+              // console.log(`#player${alphabet[colID + i]}${rowID + 1}`);
+            }
+          } else {
+            for (let i = 0; i < shipLen; i++) {
+              $(`#player${alphabet[colID]}${rowID + 1 + i}`).addClass('cell-selected');
+            }
+          }
+        } else {
+          $(this).addClass("cell-ship-strike");
+          if (player.shipList[shipArr[shipIndex]].horizontal) {
+            for (let i = 0; i < shipLen; i++) {
+              $(`#player${alphabet[colID + i]}${rowID + 1}`).addClass('cell-ship-strike');
+              // console.log(`#player${alphabet[colID + i]}${rowID + 1}`);
+            }
+          } else {
+            for (let i = 0; i < shipLen; i++) {
+              $(`#player${alphabet[colID]}${rowID + 1 + i}`).addClass('cell-ship-strike');
+            }
+          }
+        }
+      }, function() {
+        $('.player-cell').removeClass("cell-selected");
+        $('.player-cell').removeClass("cell-ship-strike");
+      });
     
-    switch (method) {
-    case 'add':
-      switch (methodID) {
-      case 'shl':
-        if (player.shipList[ship].length < player.boardSize) {
-          player.shipList[ship].length ++;
-          computer.shipList[ship].length ++;
-          $(this).prev().text(player.shipList[ship].length);
+      $(".player-cell").click(function () {
+        if (player.checkEligible($(this).attr("id").slice(6, 10), player.shipList[shipArr[shipIndex]])) {
+          
+          // place ship
+          const cell = $(this).attr("id").slice(6, 10);
+          const colID = player.convertColToNum(cell.slice(0, 1));
+          const rowID = cell.slice(1, cell.length) - 1;
+          const ship = shipArr[shipIndex];
+          console.log('placing ship:', ship);
+          const shipLen = player.shipList[shipArr[shipIndex]].length;
+  
+          if (player.shipList[shipArr[shipIndex]].horizontal) {
+            for (let i = 0; i < shipLen; i++) {
+              player.board[rowID][colID + i] = ship;
+            }
+          } else {
+            for (let i = 0; i < shipLen; i++) {
+              player.board[rowID + i][colID] = ship;
+            }
+          }
+          renderShips(player, 'player');
+  
+          shipIndex ++;
+          if (shipIndex < shipCount) {
+            console.log('new ship index', shipIndex);
+            colorShipSelector(shipArr[shipIndex]);
+          } else {
+            // unbind the hover
+            $(".player-cell").unbind();
+            $(".player-cell").removeClass("cell-selected");
+            $(`[id^=player${ship}]`).removeClass("cell-selected");
+            donePlacingStartGame();
+            console.log(player);
+            console.log(computer);
+          }
+  
         }
-        break;
-      case 'spt':
-        player.shotsPerTurn ++;
-        $("#setting-spt").text(player.shotsPerTurn);
-        break;
-      case 'bsi':
-        player.boardSize ++;
-        computer.boardSize ++;
-        $("#setting-bsi").text(player.boardSize);
-        break;
-      case 'dif':
-        if (player.difficulty < player.diffArray.length) {
-          player.difficulty ++;
-          $('#setting-dif').text(player.diffArray[player.difficulty]);
+      });
+  
+      // Rotate current ship
+      $("body").keydown(function(event) {
+        if (event.originalEvent.key === 'r') {
+          console.log('shipIndex', shipIndex);
+          console.log('shipArr', shipArr);
+          player.shipList[shipArr[shipIndex]].horizontal = !player.shipList[shipArr[shipIndex]].horizontal;
+          console.log(player.shipList[shipArr[shipIndex]].horizontal);
         }
-        break;
-      }
-      break;
-    case 'del':
-      switch (methodID) {
-      case 'shl':
-        if (player.shipList[ship].length > 1) {
-          player.shipList[ship].length --;
-          computer.shipList[ship].length --;
-          $(this).next().text(player.shipList[ship].length);
-        }
-        break;
-      case 'spt':
-        if (player.shotsPerTurn > 1) {
-          player.shotsPerTurn --;
-          $("#setting-spt").text(player.shotsPerTurn);
-        }
-        break;
-      case 'bsi':
-        if (player.boardSize > 2) {
-          player.boardSize --;
-          computer.boardSize --;
-          $("#setting-bsi").text(player.boardSize);
-        }
-        break;
-      case 'dif':
-        if (player.difficulty > 0) {
-          player.difficulty --;
-          $('#setting-dif').text(player.diffArray[player.difficulty]);
-        }
-        break;
-      }
-      break;
-    }
+      });
+    });
 
-  });
+
+    // Code to set up settings.
+    $(".ticker-box").click(function() {
+      const id = $(this).attr('id');
+      const method = id.slice(8,11);
+      const methodID = id.slice(12,15);
+      const ship = id.slice(16, 28);
+      
+      switch (method) {
+      case 'add':
+        switch (methodID) {
+        case 'shl':
+          if (player.shipList[ship].length < player.boardSize) {
+            player.shipList[ship].length ++;
+            computer.shipList[ship].length ++;
+            $(this).prev().text(player.shipList[ship].length);
+          }
+          break;
+        case 'spt':
+          player.shotsPerTurn ++;
+          $("#setting-spt").text(player.shotsPerTurn);
+          break;
+        case 'bsi':
+          player.boardSize ++;
+          computer.boardSize ++;
+          $("#setting-bsi").text(player.boardSize);
+          break;
+        case 'dif':
+          if (player.difficulty < player.diffArray.length) {
+            player.difficulty ++;
+            $('#setting-dif').text(player.diffArray[player.difficulty]);
+          }
+          break;
+        }
+        break;
+      case 'del':
+        switch (methodID) {
+        case 'shl':
+          if (player.shipList[ship].length > 1) {
+            player.shipList[ship].length --;
+            computer.shipList[ship].length --;
+            $(this).next().text(player.shipList[ship].length);
+          }
+          break;
+        case 'spt':
+          if (player.shotsPerTurn > 1) {
+            player.shotsPerTurn --;
+            $("#setting-spt").text(player.shotsPerTurn);
+          }
+          break;
+        case 'bsi':
+          if (player.boardSize > 2) {
+            player.boardSize --;
+            computer.boardSize --;
+            $("#setting-bsi").text(player.boardSize);
+          }
+          break;
+        case 'dif':
+          if (player.difficulty > 0) {
+            player.difficulty --;
+            $('#setting-dif').text(player.diffArray[player.difficulty]);
+          }
+          break;
+        }
+        break;
+      }
+
+    });
+
+  };
+
+  renderSettings();
+  applySettingStyling();
+
 };

@@ -11,6 +11,10 @@
 .settings-number {
   padding: 0.4rem;
 }
+
+.settings-button {
+  cursor: pointer;
+}
 .settings-button:hover {
   background-color: darkgreen;
 }
@@ -62,6 +66,7 @@
 }
 .ticker-box {
   border: chartreuse 0.1rem solid;
+  cursor: pointer;
   font-size: 2rem;
   width: 50%;
   display: flex;

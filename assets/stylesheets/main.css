@@ -45,6 +45,11 @@
   overflow:auto;
 }
 
+#upper-info-bar {
+  display: flex;
+  flex-direction: row;
+}
+
 .info-box{
   background: rgb(0, 0, 0);
   display: flex; 
