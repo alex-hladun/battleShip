@@ -4,7 +4,7 @@ A battleship game for browser!
 This project uses HTML, CSS, JS, and jQuery with plans to set up Express on the back-end. It has features such as differing computer level, ship placement, and a couple of other features. The game works, but there are still a couple of features I would like to add when I have some more time.
 
 # Final Product
-[Take a look yourself!](https://alex-hladun.github.io/battleShip/)
+[Play for yourself here!](https://alex-hladun.github.io/battleShip/)
 
 # Road map / bugs
 
@@ -23,6 +23,8 @@ This project uses HTML, CSS, JS, and jQuery with plans to set up Express on the 
 * Add the ability to replay a game from the leaderboard.
 
 * Minor issue where column labels are off-center.
+
+* If a ship size is over ~6, it may clip into the board.
 
 * A glitch where you can't rotate the first ship after starting a new game.
 
