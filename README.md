@@ -10,6 +10,8 @@ This project uses HTML, CSS, JS, and jQuery with plans to set up Express on the 
 
 * The add/remove ship, shots per turn, and play online with friend features need to be implemented. 
 
+* All .js code is in one file. Needs to be modularized better. 
+
 * Game may crash if board is set too small. Need to add constraints to make sure this isn't possible.
 
 * Set max size for game board setting. 
