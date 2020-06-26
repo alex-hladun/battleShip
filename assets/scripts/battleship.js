@@ -262,9 +262,16 @@ let setUpGame = function (jQuery, data, options, element) {
 
     const infoBox = $(`<div id="turn-indicator" class="info-box info-banner">Player Turn!</div>`);
     infoBox.appendTo(upperInfo);
+    
+    const gameInfoBar = $(`<div id="game-info-bar">
+    <div id="player-above-label">Player</div>
+    <div id="cpu-above-label">Computer</div>
+      </div>`);
+    gameInfoBar.appendTo(gameContainer);
 
-    const allInfoContainer = $(`<div id="all-info-container">`);
+    const allInfoContainer = $(`<div id="all-info-container"></div>`);
     allInfoContainer.appendTo(gameContainer);
+
 
     const gamelog = $(`<div id="game-log" class="info-box"></div>`);
     gamelog.appendTo(gameContainer);

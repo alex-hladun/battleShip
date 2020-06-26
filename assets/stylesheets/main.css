@@ -7,7 +7,7 @@
   color: chartreuse;
   align-items: center;
   width: 1200px; 
-  height: 1500px;
+  /* height: 1500px; */
   border: 1px solid chartreuse;
   align-self: center;
   justify-self: center;
@@ -48,6 +48,13 @@
 #upper-info-bar {
   display: flex;
   flex-direction: row;
+}
+
+#game-info-bar {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  font-size: 2rem;
 }
 
 .info-box{
@@ -118,6 +125,15 @@
 .middle-content{
   display: flex;
   flex: 1;
+}
+
+#player-above-label {
+  position: relative;
+  left: 22.5rem; 
+}
+#cpu-above-label {
+  position: relative;
+  left: 52rem; 
 }
 
 .hover-red:hover {
