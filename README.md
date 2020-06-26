@@ -14,6 +14,8 @@ This project uses HTML, CSS, JS, and jQuery with plans to set up Express on the 
 
 * Game may crash if board is set too small. Need to add constraints to make sure this isn't possible.
 
+* Bug that appears ocassionally where user can't start a new game.
+
 * Set max size for game board setting. 
 
 * Set up a server with express to serve the game and allow players to play against each other. 
