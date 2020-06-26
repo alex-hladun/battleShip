@@ -62,20 +62,15 @@ class Board {
   }
 
   checkEligible(cell, ship) {
-
-    console.log("cell", cell);
     const colID = this.convertColToNum(cell.slice(0, 1));
     const rowID = cell.slice(1, cell.length) - 1;
     const shipLen = ship.length;
-
-    console.log('ship detail', ship);
 
     if (ship.horizontal) {
       for (let i = 0; i < shipLen; i++) {
         if (this.board[rowID][colID + i] !== "O" || this.board[rowID][colID + i] === undefined) {
           return false;
         }
-        console.log('approved true value', this.board[rowID][colID + i]);
       }
       return true;
     } else {
@@ -87,7 +82,6 @@ class Board {
         if (this.board[rowID + i][colID] !== "O" || this.board[rowID + i][colID] === undefined) {
           return false;
         }
-        console.log('aprroved true vert value', this.board[rowID + i][colID]);
       }
       return true;
     }
@@ -140,11 +134,8 @@ class Board {
 
   generateComputerMoves(enemy) {
     const alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
-    // console.log(enemy.board);
     for (const row in enemy.board) {
-      // console.log(enemy.board[row]);
       for (const col in enemy.board[row]) {
-        // console.log('targett',enemy.board[row][col]);
         if (enemy.board[row][col] !== 'O') {
           const colID = alphabet[col];
           const rowID = Number(row) + 1;
@@ -158,14 +149,11 @@ class Board {
           case 2:
             this.potentialMoves.push(this.getRandomCell());
             this.potentialMoves.push(this.getRandomCell());
-            console.log('hit third move add');
             break;
           }
         }
       }
     }
-
-    console.log(this);
   }
 
   convertColToNum(col) {
@@ -176,11 +164,7 @@ class Board {
   computerAttack(target) {
     const randIndex = Math.round(Math.random() * (this.potentialMoves.length - 1));
     const randMove = this.potentialMoves.splice(randIndex, 1);
-    console.log('random index', randIndex);
-    console.log('moves length', this.potentialMoves.length);
-
     let validShot = this.attack(target, randMove[0]);
-
     while (!validShot) {
       validShot = this.attack(target, this.getRandomCell());
     }
@@ -189,15 +173,12 @@ class Board {
   attack(enemy, target) {
     const colID = this.convertColToNum(target.slice(0, 1));
     const rowID = target.slice(1, target.length) - 1;
-    console.log(`Original target: ${target}`);
-    console.log(`Shooting array val ${colID} - ${rowID}. Cell contents: ${enemy.board[rowID][colID]}`);
     const enemyShot = enemy.board[rowID][colID];
 
     let logMessage;
 
     switch (enemyShot) {
     case 'O':
-      console.log("Miss!");
       enemy.board[rowID][colID] = "M";
       logMessage = $(`<span>${this.name.toLocaleUpperCase()} fired at ${target.toLocaleUpperCase()}. <b>Miss!</b></span>`);
       logMessage.appendTo($(`#game-log`));
@@ -206,10 +187,8 @@ class Board {
       $(`#${enemy.name}${target}`).unbind('mouseenter');
       return true;
     case 'X':
-      console.log("Shot at target already hit");
       return false;
     case "M":
-      console.log("Shot at target already missed");
       return false;
     default:
       // Adds red to ship indicator.
@@ -337,9 +316,7 @@ let setUpGame = function (jQuery, data, options, element) {
     for (const row in playerObj.board) {
       for (const col in playerObj.board[row]) {
         if (playerObj.board[row][col] !== "O") {
-          // console.log(`#${identifier}${alphabet[col]}${Number(row) + 1}`);
           $(`#${identifier}${alphabet[col]}${Number(row) + 1}`).addClass("cell-ship-present");
-          // $(`#${identifier}${alphabet[col]}${Number(row) + 1}`).html(`${playerObj.board[row][col]}`);
         }
       }
     }
@@ -536,7 +513,6 @@ let setUpGame = function (jQuery, data, options, element) {
         shipArr.push(ship);
       }
       const shipCount = Object.keys(player.shipList).length;
-      console.log('ship count:', shipCount);
       colorShipSelector(shipArr[shipIndex]);
   
       // Change color of all eligible spaces
@@ -547,12 +523,10 @@ let setUpGame = function (jQuery, data, options, element) {
         const shipLen = player.shipList[shipArr[shipIndex]].length;
         
         if (player.checkEligible($(this).attr("id").slice(6, 10), player.shipList[shipArr[shipIndex]])) {
-          console.log('eligible cell');
           $(this).addClass("cell-selected");
           if (player.shipList[shipArr[shipIndex]].horizontal) {
             for (let i = 0; i < shipLen; i++) {
               $(`#player${alphabet[colID + i]}${rowID + 1}`).addClass('cell-selected');
-              // console.log(`#player${alphabet[colID + i]}${rowID + 1}`);
             }
           } else {
             for (let i = 0; i < shipLen; i++) {
@@ -564,7 +538,6 @@ let setUpGame = function (jQuery, data, options, element) {
           if (player.shipList[shipArr[shipIndex]].horizontal) {
             for (let i = 0; i < shipLen; i++) {
               $(`#player${alphabet[colID + i]}${rowID + 1}`).addClass('cell-ship-strike');
-              // console.log(`#player${alphabet[colID + i]}${rowID + 1}`);
             }
           } else {
             for (let i = 0; i < shipLen; i++) {
@@ -585,7 +558,6 @@ let setUpGame = function (jQuery, data, options, element) {
           const colID = player.convertColToNum(cell.slice(0, 1));
           const rowID = cell.slice(1, cell.length) - 1;
           const ship = shipArr[shipIndex];
-          console.log('placing ship:', ship);
           const shipLen = player.shipList[shipArr[shipIndex]].length;
   
           if (player.shipList[shipArr[shipIndex]].horizontal) {
@@ -598,10 +570,8 @@ let setUpGame = function (jQuery, data, options, element) {
             }
           }
           renderShips(player, 'player');
-  
           shipIndex ++;
           if (shipIndex < shipCount) {
-            console.log('new ship index', shipIndex);
             colorShipSelector(shipArr[shipIndex]);
           } else {
             // unbind the hover
@@ -609,8 +579,6 @@ let setUpGame = function (jQuery, data, options, element) {
             $(".player-cell").removeClass("cell-selected");
             $(`[id^=player${ship}]`).removeClass("cell-selected");
             donePlacingStartGame();
-            console.log(player);
-            console.log(computer);
           }
   
         }
@@ -619,10 +587,10 @@ let setUpGame = function (jQuery, data, options, element) {
       // Rotate current ship
       $("body").keydown(function(event) {
         if (event.originalEvent.key === 'r') {
-          console.log('shipIndex', shipIndex);
-          console.log('shipArr', shipArr);
+          // console.log('shipIndex', shipIndex);
+          // console.log('shipArr', shipArr);
           player.shipList[shipArr[shipIndex]].horizontal = !player.shipList[shipArr[shipIndex]].horizontal;
-          console.log(player.shipList[shipArr[shipIndex]].horizontal);
+          // console.log(player.shipList[shipArr[shipIndex]].horizontal);
         }
       });
     });
