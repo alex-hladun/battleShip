@@ -1,4 +1,11 @@
+
+
 /* eslint-disable no-fallthrough */
+// const socketIO = require('socket.io');
+// const socket = io();
+// socket.on('message', function(data) {
+//   console.log(data);
+// });
 
 // const e = require("express");
 
@@ -587,10 +594,7 @@ let setUpGame = function (jQuery, data, options, element) {
       // Rotate current ship
       $("body").keydown(function(event) {
         if (event.originalEvent.key === 'r') {
-          // console.log('shipIndex', shipIndex);
-          // console.log('shipArr', shipArr);
           player.shipList[shipArr[shipIndex]].horizontal = !player.shipList[shipArr[shipIndex]].horizontal;
-          // console.log(player.shipList[shipArr[shipIndex]].horizontal);
         }
       });
     });
