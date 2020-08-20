@@ -196,6 +196,7 @@ class Board {
     case 'X':
       return false;
     case "M":
+      console.log(this)
       return false;
     default:
       // Adds red to ship indicator.

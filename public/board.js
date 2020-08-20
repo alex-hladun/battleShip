@@ -48,16 +48,14 @@ class Board {
   }
 
   attack(enemy, target) {
+    // Where enemy is the oponents Board class instance. Target is a string like "A4".
     if (target.length !== 2) {
       console.log("Target error");
     }
 
     const col = target.slice(0,1);
     const colID = this.convertColToNum(col);
-    // console.log(colID);
-    // console.log(col);
     const rowID = target.slice(1,2) - 1;
-    // console.log(rowID);
     console.log(enemy.board[rowID][colID]);
     const enemyShot = enemy.board[rowID][colID];
 

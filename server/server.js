@@ -1,10 +1,7 @@
 "use strict";
-
-// Basic express setup:
-
+const { myFn } = require('./gameLogic');
 // Dependencies
 const express = require('express');
-const http = require('http');
 const path = require('path');
 
 const app = express();
@@ -14,8 +11,6 @@ const io = require('socket.io').listen(server)
 app.set('port', 8080);
 app.use('/static', express.static(__dirname + '/public/'));
 
-
-const PORT          = 8080;
 const bodyParser    = require("body-parser");
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -26,15 +21,17 @@ app.get('/', function(request, response) {
 });
 
 server.listen(app.get('port'))
+console.log('server listening on port 8000')
 
 // This is wrong!!!
 // app.listen(PORT, () => {
 //   console.log("Example app listening on port " + PORT);
 // });
 
+myFn();
 
 io.on('connection', function(socket) {
-  console.log('a user connected');
+  console.log(`a user connected: ${socket.id}`);
 
   socket.on('message', (msg) => {
     console.log('message: ' + msg);
@@ -50,4 +47,9 @@ setInterval(function() {
     shot: "A12",
     type: "HIT"
 });
-}, 1000);
+}, 5000);
+
+module.exports = {
+  io
+}
+

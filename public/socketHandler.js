@@ -1,7 +1,7 @@
 var socket = io();
   socket.on('connect', function(){
     setInterval(() => {
-      socket.emit('message', 'Hello from BattleShip')
+      socket.emit('message', 'Hello from BattleShip', 'test')
     }, 5000); 
   });
   socket.on('event', function(data){
@@ -14,3 +14,4 @@ var socket = io();
     }
   });
   socket.on('disconnect', function(){});
+
